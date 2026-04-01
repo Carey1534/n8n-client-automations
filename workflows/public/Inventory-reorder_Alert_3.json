@@ -1,0 +1,128 @@
+{
+  "name": "Inventory-reorder_Alert_3",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6ceff4aa-f8e1-4073-954e-f61d5c2b3bba",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js",
+          "mode": "list",
+          "cachedResultName": "AI-Practice n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1330389994,
+          "mode": "list",
+          "cachedResultName": "Inventory-reorder_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit#gid=1330389994"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "0e87f963-001c-46cb-bc64-142135d6f8a8",
+      "name": "Read_inventory_stock",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\nconst lowStock = [];\n\nfor (const row of rows) {\n  const qty = Number(row.json.Quantity);\n  const threshold = Number(row.json.Threshold);\n\n  if (qty < threshold) {\n    lowStock.push(`${row.json.Item} (Qty: ${qty})`);\n  }\n}\n\n// Return one combined string\nreturn [{\n  json: {\n    summary: lowStock.length\n      ? `The following items need restocking:\n      \\n\\n${lowStock.join(\"\\n\")}`\n      : \"All stock levels are sufficient today.\"\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "cc3485a5-5994-4f8c-aec0-a383beab65e3",
+      "name": "Code for checking inventory",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@proton.me",
+        "subject": "Low Stock Alert",
+        "message": "={{ $json.summary }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "21ae7d3c-1c47-48a4-912e-974e89b2952e",
+      "name": "Email code output",
+      "webhookId": "d6b60fe9-1f41-436a-83c0-b2d81292d814",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read_inventory_stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read_inventory_stock": {
+      "main": [
+        [
+          {
+            "node": "Code for checking inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code for checking inventory": {
+      "main": [
+        [
+          {
+            "node": "Email code output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}

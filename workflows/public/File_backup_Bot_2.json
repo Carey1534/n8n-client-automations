@@ -1,0 +1,242 @@
+{
+  "name": "File_backup_Bot_2",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1fSTfhdNizhTfcM6atLb5njPdhSa9a_tN",
+          "mode": "list",
+          "cachedResultName": "Uploads",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1fSTfhdNizhTfcM6atLb5njPdhSa9a_tN"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f714f0e6-f0ea-4ada-b6c8-233b3365f29d",
+      "name": "Google Drive Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json[\"id\"] }}",
+          "mode": "id"
+        },
+        "name": "={{ $json.name }}",
+        "sameFolder": false,
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "0B5TEUvNia6mgWmYxa0tSenlTa1E",
+          "mode": "list",
+          "cachedResultName": "Backup of computer",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/0B5TEUvNia6mgWmYxa0tSenlTa1E?resourcekey=0-7gE_8r9f7Q3iqoHJ4dU6Lw"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "897c7b3c-43c9-4643-ae80-f08ed3795bc6",
+      "name": "Copy file"
+    },
+    {
+      "parameters": {
+        "jsCode": "const date = new Date().toISOString().split('T')[0];\nreturn [{ json: { name: `${$json.name}_backup_${date}` } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "d2a27c91-3f1f-4d48-a3bc-01e7c8518913",
+      "name": "Rename to backup"
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Copy file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy file": {
+      "main": [
+        [
+          {
+            "node": "Rename to backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "pinData": {
+    "Google Drive Trigger": [
+      {
+        "json": {
+          "parents": [
+            "1fSTfhdNizhTfcM6atLb5njPdhSa9a_tN"
+          ],
+          "lastModifyingUser": {
+            "displayName": "Connor Carey",
+            "kind": "drive#user",
+            "me": true,
+            "permissionId": "06664676666634207379",
+            "emailAddress": "YOUR_EMAIL@gmail.com",
+            "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocKALLVbfu93Y2QBdzaRVKWZhDKVdpkzJ3npsxpF2ZhUCtMhXynq=s64"
+          },
+          "owners": [
+            {
+              "displayName": "Connor Carey",
+              "kind": "drive#user",
+              "me": true,
+              "permissionId": "06664676666634207379",
+              "emailAddress": "YOUR_EMAIL@gmail.com",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocKALLVbfu93Y2QBdzaRVKWZhDKVdpkzJ3npsxpF2ZhUCtMhXynq=s64"
+            }
+          ],
+          "permissions": [
+            {
+              "kind": "drive#permission",
+              "id": "06664676666634207379",
+              "type": "user",
+              "emailAddress": "YOUR_EMAIL@gmail.com",
+              "role": "owner",
+              "displayName": "Connor Carey",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocKALLVbfu93Y2QBdzaRVKWZhDKVdpkzJ3npsxpF2ZhUCtMhXynq=s64",
+              "deleted": false,
+              "pendingOwner": false
+            }
+          ],
+          "spaces": [
+            "drive"
+          ],
+          "capabilities": {
+            "canAcceptOwnership": false,
+            "canAddChildren": false,
+            "canAddMyDriveParent": false,
+            "canChangeCopyRequiresWriterPermission": true,
+            "canChangeItemDownloadRestriction": true,
+            "canChangeSecurityUpdateEnabled": false,
+            "canChangeViewersCanCopyContent": true,
+            "canComment": true,
+            "canCopy": true,
+            "canDelete": true,
+            "canDisableInheritedPermissions": false,
+            "canDownload": true,
+            "canEdit": true,
+            "canEnableInheritedPermissions": true,
+            "canListChildren": false,
+            "canModifyContent": true,
+            "canModifyContentRestriction": true,
+            "canModifyEditorContentRestriction": true,
+            "canModifyOwnerContentRestriction": true,
+            "canModifyLabels": false,
+            "canMoveChildrenWithinDrive": false,
+            "canMoveItemIntoTeamDrive": true,
+            "canMoveItemOutOfDrive": true,
+            "canMoveItemWithinDrive": true,
+            "canReadLabels": false,
+            "canReadRevisions": true,
+            "canRemoveChildren": false,
+            "canRemoveContentRestriction": false,
+            "canRemoveMyDriveParent": true,
+            "canRename": true,
+            "canShare": true,
+            "canTrash": true,
+            "canUntrash": true
+          },
+          "permissionIds": [
+            "06664676666634207379"
+          ],
+          "linkShareMetadata": {
+            "securityUpdateEligible": false,
+            "securityUpdateEnabled": true
+          },
+          "downloadRestrictions": {
+            "itemDownloadRestriction": {
+              "restrictedForReaders": false,
+              "restrictedForWriters": false
+            },
+            "effectiveDownloadRestrictionWithContext": {
+              "restrictedForReaders": false,
+              "restrictedForWriters": false
+            }
+          },
+          "kind": "drive#file",
+          "id": "15FpJfD60NnfpBfy_GNC8Pqce3Aj__-S0",
+          "name": "Oil Change.pdf",
+          "mimeType": "application/pdf",
+          "starred": false,
+          "trashed": false,
+          "explicitlyTrashed": false,
+          "version": "3",
+          "webContentLink": "https://drive.google.com/uc?id=15FpJfD60NnfpBfy_GNC8Pqce3Aj__-S0&export=download",
+          "webViewLink": "https://drive.google.com/file/d/15FpJfD60NnfpBfy_GNC8Pqce3Aj__-S0/view?usp=drivesdk",
+          "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/application/pdf",
+          "hasThumbnail": true,
+          "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/AJQWtBOUkWFoTs1MWyCEwdkpbmMqizoaOrw8i8me4JjDD25DDTocZuLxYDmGBdEZ7GjVVpA9SaU2yVgUvJxMaXs56VVSieNLxBkEg8Xh1iJd9X1I-Q=s220",
+          "thumbnailVersion": "1",
+          "viewedByMe": true,
+          "viewedByMeTime": "2025-10-15T02:48:01.110Z",
+          "createdTime": "2025-10-15T02:48:01.110Z",
+          "modifiedTime": "2021-08-10T18:14:24.000Z",
+          "modifiedByMeTime": "2021-08-10T18:14:24.000Z",
+          "modifiedByMe": true,
+          "shared": false,
+          "ownedByMe": true,
+          "viewersCanCopyContent": true,
+          "copyRequiresWriterPermission": false,
+          "writersCanShare": true,
+          "originalFilename": "Oil Change.pdf",
+          "fullFileExtension": "pdf",
+          "fileExtension": "pdf",
+          "md5Checksum": "9379fc870e62b6dd5fe4f4ed57b7917c",
+          "sha1Checksum": "1bffc6c941515f381ec64a2f01e8d23c9400fe07",
+          "sha256Checksum": "920aa9dcde2f3f1cf43299436fef89c754f8fa8b376594d9231cfd862454661d",
+          "size": "204737",
+          "quotaBytesUsed": "204737",
+          "headRevisionId": "0B5TEUvNia6mgV2QxbzhZSVVEZTF3TGVyWU9Za3NvNmN4U3VnPQ",
+          "isAppAuthorized": false,
+          "inheritedPermissionsDisabled": false
+        }
+      }
+    ]
+  }
+}
