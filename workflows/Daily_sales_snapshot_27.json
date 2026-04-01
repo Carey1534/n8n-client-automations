@@ -1,0 +1,192 @@
+{
+  "name": "Daily_sales_snapshot_27",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4941c024-f805-4b10-b7bb-f9af154f06a4",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        656,
+        192
+      ],
+      "id": "f026b935-21be-44cf-94d4-e4d64b263a9a",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js",
+          "mode": "list",
+          "cachedResultName": "AI-Practice n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2059932725,
+          "mode": "list",
+          "cachedResultName": "Daily_sales_snapshot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit#gid=2059932725"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "492d4841-e30e-421b-8f3d-cc68e4acfdd9",
+      "name": "Read_sales_data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4804ba4-aeeb-4175-945f-29d7f95d4b80",
+              "name": "sales_text",
+              "value": "={{ $input.all().map(i => `${i.json.Customer}: ${i.json.Item} x${i.json.Quantity} for ${i.json.Amount}`).join(\"; \") }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "afd1e86a-987b-4c86-ad7d-5b5798611a09",
+      "name": "Format_for_GPT"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Summarize today's sales in two sentences.\nInclude total revenue and any standout products.\n\nSales data:\n{{$json[\"sales_text\"]}}\n\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "9ec21155-7c5a-49d6-bcae-29fecfdc33fe",
+      "name": "Sales-summary",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cb12197f-6ca5-4348-b31e-e068defa7281",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "4e7e2233-5c1a-42f8-b872-f1abd6a3b92a",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Read_sales_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sales-summary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read_sales_data": {
+      "main": [
+        [
+          {
+            "node": "Format_for_GPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format_for_GPT": {
+      "main": [
+        [
+          {
+            "node": "Sales-summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales-summary": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}

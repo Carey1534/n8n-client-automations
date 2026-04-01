@@ -1,0 +1,132 @@
+{
+  "name": "Shift_schedule_broadcaster10",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7586a40e-c4e4-4270-9d74-51dfde22191d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js",
+          "mode": "list",
+          "cachedResultName": "AI-Practice n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 825781849,
+          "mode": "list",
+          "cachedResultName": "Staff sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit#gid=825781849"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "69d2f8d3-9d68-4ac7-8af1-ab965adfd8bb",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2dfc2b27-6c5e-40df-b173-4f6976b82441",
+              "name": "to",
+              "value": "={{ $json[\"Phone\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "b784dfc6-2cd0-4e8c-93d9-f6de23e895bd",
+              "name": "body",
+              "value": "=Hi {{ $json[\"Name\"] }}, Your shift this week: \n{{ $json['Shift Details'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "0e348ebb-3959-44f2-b680-fdf3cee32156",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "ac76da7b-dd79-4eea-8333-c3f6e5d1babf",
+      "name": "SMS messaging node (No payment, not work)"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "SMS messaging node (No payment, not work)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}

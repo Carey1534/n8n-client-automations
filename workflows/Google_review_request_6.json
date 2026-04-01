@@ -1,0 +1,258 @@
+{
+  "name": "Google_review_request_6",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e632a96b-f4ed-4b61-b6d8-30c928c4241d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js",
+          "mode": "list",
+          "cachedResultName": "AI-Practice n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2141852607,
+          "mode": "list",
+          "cachedResultName": "Google_review_link",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit#gid=2141852607"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "=Status",
+              "lookupValue": "Completed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "cf96a1d7-bf00-4ad4-86f3-f5fa6e6b345e",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "592380e9-cead-471c-9e91-eaadd5cee798",
+              "leftValue": "={{$json[\"SentReviewRequest\"]}}",
+              "rightValue": "TRUE",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "6c1b01e7-8895-45be-81e6-48ecb5fa745e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json[\"Email\"]}}",
+        "subject": "Thank you - We'd Love Your Feedback!",
+        "message": "=<p>Hi {{$json[\"ClientName\"]}},</p> <p>Thanks for training with us! Could you share your experience?</p> \n\n<p><a href=\"https://www.google.com/search?sca_esv=5fe32dea3fb1ec31&sxsrf=AE3TifO6sK3DDNB6ztpthOYlXvnaKmhxgg:1760500991502&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E4vp6xA01PL1dzsOAB5C6f-3YtwvaNoD66IzRiwO88Q19PIMGWbWwFAk2_x63-vRijlZv_uhbhJo-H0XIDsxkv2Zev0fXuYZGtCOy-s53nPzBewhOVJDRHXmqdWPd1cnkduyRfw%3D&q=Own+Your+Dream+%28OYD%29+Sports+Academy+Reviews&sa=X&ved=2ahUKEwjAs-ahqaWQAxWBJkQIHRc1I3gQ0bkNegQIJxAE&biw=1278&bih=910&dpr=1#lrd=0x872b07df06f9e505:0xf856080f05496051,1,,,,\">Leave a quick review here</a>.</p> \n<p>We appreciate your support!<br>- OYD Sports Academy</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "7fbecc3c-87da-4467-a39a-29e1e60b5da6",
+      "name": "Send a message",
+      "webhookId": "57ca5613-cf56-4fb7-8130-828f18d51b3d",
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js",
+          "mode": "list",
+          "cachedResultName": "AI-Practice n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2141852607,
+          "mode": "list",
+          "cachedResultName": "Google_review_link",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit#gid=2141852607"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "SentReviewRequest": "TRUE",
+            "row_number": "={{ $('Get row(s) in sheet').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "ClientName",
+              "displayName": "ClientName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SentReviewRequest",
+              "displayName": "SentReviewRequest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        0
+      ],
+      "id": "52d9e50d-4a98-402e-bef5-e92178f4b809",
+      "name": "Update row in sheet",
+      "alwaysOutputData": true,
+      "retryOnFail": true
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}

@@ -1,0 +1,182 @@
+{
+  "name": "Late_payment_reminder15",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        96
+      ],
+      "id": "4ecb4123-0543-49fb-92e3-fd94bf589f5c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js",
+          "mode": "list",
+          "cachedResultName": "AI-Practice n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1617867872,
+          "mode": "list",
+          "cachedResultName": "late_payment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LkbXmxLLAOFr-7o7Epa0gU4JsokOpXjoLBRzReah2js/edit#gid=1617867872"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -592,
+        96
+      ],
+      "id": "902e905e-7301-47f1-952d-f43895ad7b00",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1448dbdd-d4b0-4919-9042-d8a2b9db2793",
+              "leftValue": "={{ $('Get row(s) in sheet').item.json.Status }}",
+              "rightValue": "Unpaid",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        96
+      ],
+      "id": "e6829d10-6656-49a4-a4a9-c7c8ef922c89",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8fe0418d-8eee-4685-b660-695810950c59",
+              "name": "To",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "ffbabc21-0576-4217-ace0-b4899fb870e9",
+              "name": "Subject",
+              "value": "Invoice Due",
+              "type": "string"
+            },
+            {
+              "id": "7f1e4801-05f1-49d8-a50d-d40d00c45ad3",
+              "name": "body",
+              "value": "=Hi {{ $json[\"Client\"] }},\nWe noticed your invoice (amount: ${{ $json[\"Amount\"] }}) is past due. \nPlease complete payment at your earliest convenience.\nThank you for your business!\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        96
+      ],
+      "id": "ae66ef0f-296c-4b84-8e34-039a454e4eb6",
+      "name": "Edit Fields",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.To }}",
+        "subject": "={{ $('Edit Fields').item.json.Subject }}",
+        "message": "={{ $('Edit Fields').item.json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3f8e4573-160c-4a95-ae68-4540dfb446ca",
+      "name": "Send a message",
+      "webhookId": "a282e7ad-a2bc-49e8-80a8-29e2fe5b8904"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}

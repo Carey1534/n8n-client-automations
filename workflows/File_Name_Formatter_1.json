@@ -1,0 +1,99 @@
+{
+  "name": "File_Name_Formatter_1",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMonth"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1fSTfhdNizhTfcM6atLb5njPdhSa9a_tN",
+          "mode": "list",
+          "cachedResultName": "Uploads",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1fSTfhdNizhTfcM6atLb5njPdhSa9a_tN"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fb505039-9917-47b4-a198-e489efa57817",
+      "name": "Google Drive Trigger",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Gather all incoming items\nconst items = $input.all();\n\n// Map over each uploaded file\nconst renamed = items.map(item => {\n  const name = item.json.name?.split('.')[0] || 'file';\n  const ext  = item.json.name?.split('.').pop() || '';\n  const date = new Date().toISOString().split('T')[0];\n\n  return {\n    json: {\n      id: item.json.id,\n      newName: `${name}_${date}.${ext}`\n    }\n  };\n});\n\n// Always return an array of { json: {...} } objects\nreturn renamed;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "25c5e93a-c58e-4df8-a35b-b6d309b9db1a",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json[\"id\"]}}",
+          "mode": "id"
+        },
+        "newUpdatedFileName": "={{ $json[ \"newName\" ]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "e49b6516-f1c5-4edf-99c9-d97f03820b7e",
+      "name": "Update_file_name"
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update_file_name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}
